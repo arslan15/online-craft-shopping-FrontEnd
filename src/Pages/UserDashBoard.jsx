@@ -153,7 +153,7 @@ const UserDashboard = () => {
           ProductDescription={product.ProductDescription}
           price={product.price}
         imageUrl={resolvedImageUrl}
-          ImageUrl={resolvedImageUrl} // Pass both to completely prevent casing mismatches
+          ImageUrl={resolvedImageUrl} 
           onAddToCart={() => handleAddToCart(product)}
         />
       );

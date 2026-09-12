@@ -289,8 +289,12 @@ const AdminDashboard = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
   const handleProductChange = (e) => {
-    setFormProductData({ ...formProductData, [e.target.name]: e.target.value });
-  };
+  const { name, type, value, files } = e.target;
+  setFormProductData({ 
+    ...formProductData, 
+    [name]: type === 'file' ? files[0] : value 
+  });
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -329,21 +333,31 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleProductSubmit = async (e) => {
+ const handleProductSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const payload = {
-        productName: formProductData.productName,
-        ProductDescription: formProductData.ProductDescription,
-        productCategoryType: formProductData.productCategoryType,
-        ProductQty: Number(formProductData.ProductQty),
-        ImageUrl: formProductData.ImageUrl,
-        price: Number(formProductData.price),
-      };
+      // 1. Create a FormData object instead of a JSON object
+      const formData = new FormData();
+      formData.append('productName', formProductData.productName);
+      formData.append('ProductDescription', formProductData.ProductDescription);
+      formData.append('productCategoryType', formProductData.productCategoryType);
+      formData.append('ProductQty', Number(formProductData.ProductQty));
+      formData.append('price', Number(formProductData.price));
+      
+      // 2. Append the actual File object (from desktop) to 'ImageUrl'
+      if (formProductData.ImageUrl) {
+        formData.append('ImageUrl', formProductData.ImageUrl);
+      }
+    console.log("Current Form State:", formProductData);
+    console.log("Attached File object:", formProductData.ImageUrl);
 
-      const response = await axios.post(`${BASE_URL}/addProduct`, payload, {
-        headers: getAuthHeader(),
+      // 3. Send FormData with Axios (Axios will automatically handle multipart/form-data boundary)
+      const response = await axios.post(`${BASE_URL}/addProduct`, formData, {
+        headers: {
+          ...getAuthHeader(), // Keeps your Authorization token
+          // Do NOT manually set 'Content-Type': 'application/json' 
+        },
       });
 
       const savedProduct = response.data.product || response.data;
@@ -798,8 +812,7 @@ const AdminDashboard = () => {
                 </div>
                 <div style={styleProduct.inputGroup}>
                   <label style={styleProduct.label}>Product Description</label>
-                  <input
-                    type="text"
+                  <textarea
                     name="ProductDescription"
                     placeholder="Product Description"
                     value={formProductData.ProductDescription}
@@ -839,14 +852,13 @@ const AdminDashboard = () => {
                   />
                 </div>
                 <div style={styleProduct.inputGroup}>
-                  <label style={styleProduct.label}>Image URL</label>
-                  <input
-                    type="text"
-                    name="ImageUrl"
-                    placeholder="Image URL"
-                    value={formProductData.ImageUrl}
-                    onChange={handleProductChange}
-                    style={styles.input}
+                  <label style={styleProduct.label}>Select Image from Desktop</label>
+                  <input type="file"
+                   name="ImageUrl"
+                   accept="image/*"
+                   onChange={handleProductChange}
+                   required
+                   style={styles.input}
                   />
                 </div>
                 <div style={styleProduct.inputGroup}>

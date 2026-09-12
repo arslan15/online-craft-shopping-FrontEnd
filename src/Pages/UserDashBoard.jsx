@@ -132,20 +132,33 @@ const UserDashboard = () => {
       ) : (
         <>
           <div className="product-grid">
-            {itemsToRender.length > 0 ? (
-              itemsToRender.map((product) => (
-                <ProductCard
-                  key={product._id || product.id}
-                  productName={product.productName}
-                  productCategoryType={product.productCategoryType}
-                  ProductQty={product.ProductQty}
-                  ProductDescription={product.ProductDescription}
-                  price={product.price}
-                  ImageUrl={product.ImageUrl}
-                  onAddToCart={() => handleAddToCart(product)}
-                />
-              ))
-            ) : (
+  {itemsToRender.length > 0 ? (
+    itemsToRender.map((product) => {
+      // Resolve whether ImageUrl is a File object, a string, or a lowercase fallback
+      let resolvedImageUrl = '';
+      if (product.ImageUrl instanceof File) {
+        resolvedImageUrl = URL.createObjectURL(product.ImageUrl);
+      } else if (typeof product.ImageUrl === 'string' && product.ImageUrl.length > 0) {
+        resolvedImageUrl = product.ImageUrl;
+      } else if (product.imageUrl) {
+        resolvedImageUrl = product.imageUrl;
+      }
+
+      return (
+        <ProductCard
+          key={product._id || product.id}
+          productName={product.productName}
+          productCategoryType={product.productCategoryType}
+          ProductQty={product.ProductQty}
+          ProductDescription={product.ProductDescription}
+          price={product.price}
+        imageUrl={resolvedImageUrl}
+          ImageUrl={resolvedImageUrl} // Pass both to completely prevent casing mismatches
+          onAddToCart={() => handleAddToCart(product)}
+        />
+      );
+    })
+  ) : (
               <p className="no-products-found">
                 {searchTerm 
                   ? `No items found matching "${searchTerm}"` 

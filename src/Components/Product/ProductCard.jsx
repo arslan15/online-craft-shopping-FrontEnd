@@ -7,6 +7,8 @@ const ProductCard = (props) => {
   const toggleModal = () => {
     setShowModal((prev) => !prev);
   };
+  // Unified image source check (handles both casing variations)
+ const imageSource = props.imageUrl || props.ImageUrl;
 
   // Stock Validation Check
   const stockCount = Number(props.ProductQty) || 0;
@@ -23,10 +25,10 @@ const ProductCard = (props) => {
       {/* Main Product Card */}
       <div className="product-card">
         {/* Product Image Section at the Top */}
-        {props.ImageUrl && (
+      {imageSource && (
           <div className="product-image-container">
             <img 
-              src={props.ImageUrl} 
+              src={imageSource} 
               alt={props.productName || "Product"} 
               className="product-image" 
             />

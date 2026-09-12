@@ -16,6 +16,7 @@ export default function Cart() {
   const { cart, handleRemoveFromCart, clearCart } = useContext(MyContext);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const deliveryCharges = 250;
 
   const [address, setAddress] = useState({
     fullName: '',
@@ -34,6 +35,7 @@ export default function Cart() {
     (sum, item) => sum + (item.price || 10) * (item.quantity || 1),
     0
   );
+  const finalAmount = cart.length > 0 ? totalAmount + deliveryCharges : 0;
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
@@ -58,7 +60,7 @@ export default function Cart() {
           postalCode: address.postalCode,
           country: 'Pakistan',
         },
-        totalAmount,
+        totalAmount: finalAmount,
       };
 
       const config = {
@@ -168,8 +170,8 @@ export default function Cart() {
               </div>
 
               <div className="card-footer bg-dark border-secondary p-3 d-flex justify-content-between align-items-center">
-                <span className="text-muted">Subtotal</span>
-                <span className="fs-4 fw-bold text-success">Rs. {totalAmount}</span>
+                <span className="text">Subtotal with Delivery Charges</span>
+                <span className="fs-4 fw-bold text-success">Rs. {totalAmount + deliveryCharges}</span>
               </div>
             </div>
           </div>
@@ -267,8 +269,8 @@ export default function Cart() {
                   <hr className="border-secondary my-2" />
 
                   <div className="d-flex justify-content-between align-items-center mb-2">
-                    <span className="fw-bold">Total Payable:</span>
-                    <span className="fs-4 fw-bold text-success">Rs. {totalAmount}</span>
+                    <span className="fw-bold">Total Payable DeliveryCharges :</span>
+                    <span className="fs-4 fw-bold text-success">Rs. {finalAmount}</span>
                   </div>
 
                   <button

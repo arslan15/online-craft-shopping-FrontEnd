@@ -143,6 +143,13 @@ const UserDashboard = () => {
       } else if (product.imageUrl) {
         resolvedImageUrl = product.imageUrl;
       }
+      else if (product.image) {
+        if (typeof product.image === 'string') {
+          resolvedImageUrl = product.image;
+        } else if (product.image.data && product.image.contentType) {
+          resolvedImageUrl = `data:${product.image.contentType};base64,${product.image.data}`;
+        }
+      }
 
       return (
         <ProductCard

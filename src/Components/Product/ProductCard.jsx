@@ -9,6 +9,7 @@ const ProductCard = (props) => {
   };
   // Unified image source check (handles both casing variations)
  const imageSource = props.imageUrl || props.ImageUrl;
+ console.log("Resolved Image Source:", imageSource); // Debugging log
 
   // Stock Validation Check
   const stockCount = Number(props.ProductQty) || 0;

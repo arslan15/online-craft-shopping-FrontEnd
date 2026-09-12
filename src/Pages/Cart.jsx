@@ -269,7 +269,7 @@ export default function Cart() {
                   <hr className="border-secondary my-2" />
 
                   <div className="d-flex justify-content-between align-items-center mb-2">
-                    <span className="fw-bold">Total Payable DeliveryCharges :</span>
+                    <span className="fw-bold">Total Payable DeliveryCharges  '':</span>
                     <span className="fs-4 fw-bold text-success">Rs. {finalAmount}</span>
                   </div>
 

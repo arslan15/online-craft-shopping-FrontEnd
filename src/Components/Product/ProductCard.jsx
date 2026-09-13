@@ -8,7 +8,7 @@ const ProductCard = (props) => {
     setShowModal((prev) => !prev);
   };
   // Unified image source check (handles both casing variations)
- const imageSource = props.imageUrl || props.ImageUrl;
+ const imageSource = props.imageUrl || props.ImageUrl
  console.log("Resolved Image Source:", imageSource); // Debugging log
 
   // Stock Validation Check

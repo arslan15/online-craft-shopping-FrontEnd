@@ -112,7 +112,7 @@ const UserDashboard = () => {
           <input
             type="text"
             className="dashboard-search-input"
-            placeholder="Search books or categories by title..."
+            placeholder="Search clay Pot or canvas by product title..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

@@ -9,7 +9,7 @@ function Footer() {
   const currentYear = new Date().getFullYear()
   const phoneNumber = "923329580707";
   const username ="asarslansaeed1";
-  const defaultMessage = encodeURIComponent("Hello! I need help with an inquiry.");
+  const defaultMessage = encodeURIComponent("Hello! Prefer to order directly?.");
   const instagramUrl = `https://ig.me/m/${username}?text=${encodeURIComponent(defaultMessage)}`;
 
   const getDashboardPath = () => {
@@ -94,11 +94,14 @@ function Footer() {
             >
               <FaEnvelope />
             </a>
+             
            <a 
           href={`https://wa.me/${phoneNumber}?text=${defaultMessage}`} 
           target="_blank" 
           rel="noopener noreferrer" 
           aria-label="Chat on WhatsApp"
+          data-tooltip="Hello! Prefer to order directly?."
+          className="whatsapp-float"
           style={styles.iconLink}
         >
           <FaWhatsapp size={28} color="#25D366" />

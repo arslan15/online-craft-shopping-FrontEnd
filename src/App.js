@@ -19,6 +19,7 @@ import Cart from './Pages/Cart';
 import { WhatsAppWidget } from 'react-whatsapp-widget';
 import 'react-whatsapp-widget/dist/index.css';
 
+
 function App() {
   const companyName = "Craft Company";
   const navigate = useNavigate();
@@ -168,12 +169,19 @@ function App() {
         theme="dark" 
         transition={Slide} 
       />
+      <div className="whatsapp-widget-container" data-tooltip="Hello! Prefer to order directly?">
+        {/* The tooltip box that appears on hover */}
+  <span className="whatsapp-tooltip-text">
+    Hello! Prefer to order directly?
+  </span>
       <WhatsAppWidget 
         phoneNumber="923329580707" // Use your full international number without + or spaces
         companyName="Customer Support"
         message="Hello! 👋 How can we help you today?"
         replyTimeText="Typically replies within a few minutes"
+        
       />
+      </div>
      <MyContext.Provider 
         value={{ 
           companyName, 

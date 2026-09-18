@@ -30,7 +30,8 @@
 .product-image {
   max-width: 100%;
   max-height: 100%;
-  object-fit: contain; /* Preserves book cover aspect ratio */
+  object-fit: cover; /* This is the magic property that crops and fits the image */
+  object-position: center;/* Preserves book cover aspect ratio */
 }
 
 .product-content {

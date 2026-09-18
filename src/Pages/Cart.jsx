@@ -169,10 +169,21 @@ export default function Cart() {
                 </div>
               </div>
 
-              <div className="card-footer bg-dark border-secondary p-3 d-flex justify-content-between align-items-center">
-                <span className="text">Subtotal with Delivery Charges</span>
-                <span className="fs-4 fw-bold text-success">Rs. {totalAmount + deliveryCharges}</span>
-              </div>
+              <div className="card-footer bg-dark border-secondary p-3 d-flex flex-column gap-2">
+  <div className="d-flex justify-content-between align-items-center text-light">
+    <span>Subtotal:</span>
+    <span>Rs. {totalAmount}</span>
+  </div>
+  <div className="d-flex justify-content-between align-items-center text-light">
+    <span>Delivery Charges:</span>
+    <span>Rs. {deliveryCharges}</span>
+  </div>
+  <hr className="text-secondary my-1" />
+  <div className="d-flex justify-content-between align-items-center">
+    <span className="text-light fw-bold">Total Payable (incl. Delivery):</span>
+    <span className="fs-4 fw-bold text-success">Rs. {totalAmount + deliveryCharges}</span>
+  </div>
+</div>
             </div>
           </div>
 
@@ -187,11 +198,10 @@ export default function Cart() {
                 <form onSubmit={handleSubmitOrder} className="d-flex flex-column gap-3">
                   
                   <div>
-                    <label className="form-label small text-muted">Full Name</label>
+                    <label className="form-label small">Full Name</label>
                     <input
                       type="text"
                       name="fullName"
-                      placeholder="John Doe"
                       value={address.fullName}
                       onChange={handleChange}
                       required
@@ -201,11 +211,10 @@ export default function Cart() {
 
                   <div className="row g-2">
                     <div className="col-md-6">
-                      <label className="form-label small text-muted">Email Address</label>
+                      <label className="form-label small">Email Address</label>
                       <input
                         type="email"
                         name="email"
-                        placeholder="john@example.com"
                         value={address.email}
                         onChange={handleChange}
                         required
@@ -213,11 +222,10 @@ export default function Cart() {
                       />
                     </div>
                     <div className="col-md-6">
-                      <label className="form-label small text-muted">Phone Number</label>
+                      <label className="form-label small">Phone Number</label>
                       <input
                         type="tel"
                         name="phone"
-                        placeholder="03001234567"
                         value={address.phone}
                         onChange={handleChange}
                         required
@@ -227,11 +235,10 @@ export default function Cart() {
                   </div>
 
                   <div>
-                    <label className="form-label small text-muted">Street Address</label>
+                    <label className="form-label small">Street Address</label>
                     <input
                       type="text"
                       name="streetAddress"
-                      placeholder="House / Apartment / Street"
                       value={address.streetAddress}
                       onChange={handleChange}
                       required
@@ -241,11 +248,10 @@ export default function Cart() {
 
                   <div className="row g-2">
                     <div className="col-md-6">
-                      <label className="form-label small text-muted">City</label>
+                      <label className="form-label small">City</label>
                       <input
                         type="text"
                         name="city"
-                        placeholder="Islamabad"
                         value={address.city}
                         onChange={handleChange}
                         required
@@ -253,11 +259,10 @@ export default function Cart() {
                       />
                     </div>
                     <div className="col-md-6">
-                      <label className="form-label small text-muted">Postal Code</label>
+                      <label className="form-label small">Postal Code</label>
                       <input
                         type="text"
                         name="postalCode"
-                        placeholder="44000"
                         value={address.postalCode}
                         onChange={handleChange}
                         required
@@ -268,11 +273,11 @@ export default function Cart() {
 
                   <hr className="border-secondary my-2" />
 
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <span className="fw-bold">Total Payable DeliveryCharges  '':</span>
+                 { /*<div className="d-flex justify-content-between align-items-center mb-2">
+                    <span className="fw-bold">Total Payable (incl. Delivery) :</span>
                     <span className="fs-4 fw-bold text-success">Rs. {finalAmount}</span>
-                  </div>
-
+                  </div>*/}
+                  <span>Payment Method: Cash on Delivery (COD)</span>
                   <button
                     type="submit"
                     disabled={loading}

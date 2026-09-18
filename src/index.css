@@ -122,3 +122,95 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+/* Target the wrapper class you assigned */
+.whatsapp-float {
+  position: relative;
+}
+.whatsapp-widget-container {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  z-index: 999999 !important;
+}
+
+/* Creates the floating tooltip box on hover */
+.whatsapp-float::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 65px; /* Adjust depending on where your widget floats */
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #1f2937; /* Dark background matching your theme */
+  color: #ffedd5; /* Warm tone matching your shop cards */
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Reveals the tooltip smoothly when hovering over the widget container */
+.whatsapp-float:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+.whatsapp-tooltip-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.whatsapp-widget-container::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #1f2937;
+  color: #ffedd5;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.whatsapp-widget-container:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+.whatsapp-tooltip-text {
+  position: absolute;
+  right: 75px; /* Adjust this distance so it sits neatly to the left of your widget icon */
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #1f2937; /* Dark background matching your theme */
+  color: #ffedd5; /* Warm tone matching your shop cards */
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* When you hover anywhere over the container wrapper, slide the tooltip in */
+.whatsapp-widget-container:hover .whatsapp-tooltip-text {
+  opacity: 1;
+  visibility: visible;
+}

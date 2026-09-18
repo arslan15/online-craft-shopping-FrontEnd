@@ -7,7 +7,8 @@ import MyContext from '../../MyContext';
 function Footer() {
   const { currentUser } = useContext(MyContext);
   const currentYear = new Date().getFullYear()
-  const phoneNumber = "15551654552";
+  const phoneNumber = "923329580707";
+
   const username ="asarslansaeed1";
   const defaultMessage = encodeURIComponent("Hi, I want to see your catalog");
   const instagramUrl = `https://ig.me/m/${username}?text=${encodeURIComponent(defaultMessage)}`;

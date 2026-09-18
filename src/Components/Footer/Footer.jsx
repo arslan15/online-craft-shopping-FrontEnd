@@ -12,7 +12,7 @@ function Footer() {
   const username ="asarslansaeed1";
   const defaultMessage = encodeURIComponent("Hi");
   const instagramUrl = `https://ig.me/m/${username}?text=${encodeURIComponent(defaultMessage)}`;
-console.log("test");
+
   const getDashboardPath = () => {
     if (!currentUser) return { path: '/', label: 'Home' };
     return currentUser.role === 'Admin'

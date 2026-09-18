@@ -73,15 +73,20 @@ function Header({ companyName = "Craft Company", isLoggedIn = false, isAdmin = f
     <header className="header" ref={headerRef}>
       <div className="header-container">
         {/* Dynamic Brand / Logo */}
-        <Link to={brandLink} className="logo" onClick={closeMenu} aria-label="Home">
-          <div className="logo-icon-wrapper">
-            <CraftLogo size={32} color="#d97706" />
-          </div>
-          <span className="logo-text">
-            <span className="brand-primary">Syed Arslan</span>{' '}
-            <span className="brand-secondary">Saeed</span>
-          </span>
-        </Link>
+<Link to={brandLink} className="logo" onClick={closeMenu} aria-label="Home">
+  <div className="logo-icon-wrapper">
+    <CraftLogo size={36} color="#d97706" />
+  </div>
+  <div className="logo-text-group" style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2', marginLeft: '10px' }}>
+    <span className="logo-text" style={{ fontSize: '18px', fontWeight: 'bold' }}>
+      <span className="brand-primary" style={{ color: '#f3f4f6' }}>Syed Arslan</span>{' '}
+      <span className="brand-secondary" style={{ color: '#d97706' }}>Saeed</span>
+    </span>
+    <span className="logo-subtitle" style={{ fontSize: '11px', color: '#d1d5db', letterSpacing: '0.5px' }}>
+      Handcrafted Artistry
+    </span>
+  </div>
+</Link>
 
         {/* Dynamic Navigation Menu */}
         <nav className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`} aria-label="Main Navigation">

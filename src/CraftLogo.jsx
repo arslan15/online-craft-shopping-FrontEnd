@@ -1,6 +1,6 @@
 import React from 'react';
 
-function CraftLogo({ size = 40, color = 'currentColor' }) {
+function CraftLogo({ size = 36, color = '#d97706' }) {
   return (
     <svg 
       width={size} 
@@ -10,26 +10,27 @@ function CraftLogo({ size = 40, color = 'currentColor' }) {
       xmlns="http://www.w3.org/2000/svg"
       style={{ display: 'inline-block', verticalAlign: 'middle' }}
     >
-      {/* Clay Pot & Leaves Icon Paths */}
+      {/* Pot Rim / Leaves */}
       <path 
-        d="M256 120C230 120 210 100 210 80C210 65 225 50 256 35C287 50 302 65 302 80C302 100 282 120 256 120Z" 
+        d="M200 130C200 105 220 85 256 85C292 85 312 105 312 130H200Z" 
         fill={color} 
         opacity="0.85" 
       />
       <path 
-        d="M180 160H332C345 160 355 170 355 182V195C355 208 345 218 332 218H180C167 218 157 208 157 195V182C157 170 167 160 180 160Z" 
+        d="M160 155H352C365 155 375 165 375 178V190C375 203 365 213 352 213H160C147 213 137 203 137 190V178C137 165 147 155 160 155Z" 
         fill={color} 
       />
+      {/* Pot Body */}
       <path 
-        d="M185 235H327C355 235 375 270 365 310C345 390 300 440 256 440C212 440 167 390 147 310C137 270 157 235 185 235Z" 
+        d="M175 230H337C365 230 385 270 375 315C355 395 310 445 256 445C202 445 157 395 137 315C127 270 147 230 175 230Z" 
         stroke={color} 
         strokeWidth="24" 
         strokeLinecap="round" 
         strokeLinejoin="round" 
       />
-      {/* Paintbrush Accent */}
+      {/* Paintbrush Diagonally Across */}
       <path 
-        d="M220 310L320 210C330 200 345 200 355 210C365 220 365 235 355 245L255 345L220 350L220 310Z" 
+        d="M190 340L330 200C340 190 355 190 365 200C375 210 375 225 365 235L225 375L190 380L190 340Z" 
         fill={color} 
       />
     </svg>

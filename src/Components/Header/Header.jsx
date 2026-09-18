@@ -11,7 +11,7 @@ import {
   FaTachometerAlt,
   FaShoppingCart,
 } from 'react-icons/fa';
-import logoImg from '../../assets/react.svg';
+import CraftLogo from '../../CraftLogo.jsx'; // Import your custom SVG craft logo component
 import './Header.css';
 
 // User navigation links
@@ -74,14 +74,14 @@ function Header({ companyName = "Craft Company", isLoggedIn = false, isAdmin = f
       <div className="header-container">
         {/* Dynamic Brand / Logo */}
         <Link to={brandLink} className="logo" onClick={closeMenu} aria-label="Home">
-  <div className="logo-icon-wrapper">
-    <img src={logoImg} alt="Arslan Company Logo" className="logo-img" />
-  </div>
-  <span className="logo-text">
-    <span className="brand-primary">Craft</span>{' '}
-    <span className="brand-secondary">Company</span>
-  </span>
-</Link>
+          <div className="logo-icon-wrapper">
+            <CraftLogo size={32} color="#d97706" />
+          </div>
+          <span className="logo-text">
+            <span className="brand-primary">Syed Arslan</span>{' '}
+            <span className="brand-secondary">Saeed</span>
+          </span>
+        </Link>
 
         {/* Dynamic Navigation Menu */}
         <nav className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`} aria-label="Main Navigation">

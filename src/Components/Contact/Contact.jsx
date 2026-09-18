@@ -5,9 +5,9 @@ import {
   FaPhoneAlt, 
   FaMapMarkerAlt, 
   FaPaperPlane,
-  FaGithub,
-  FaLinkedin,
-  FaTwitter,
+  FaWhatsapp,
+  FaFacebook,
+  FaInstagram,
   FaSpinner,
   FaComments
 } from 'react-icons/fa';
@@ -113,15 +113,34 @@ function Contact() {
                 Give us feedback so we can continuously improve our services and capabilities.
               </p>
               <div className="social-icons-wrapper">
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="social-icon-btn">
-                  <FaGithub />
-                </a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-icon-btn">
-                  <FaLinkedin />
-                </a>
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="social-icon-btn">
-                  <FaTwitter />
-                </a>
+          
+  <a 
+    href="https://instagram.com" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    aria-label="Instagram"
+    className="social-icon-link"
+  >
+    <FaInstagram />
+  </a>
+  <a 
+    href="https://facebook.com/" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    aria-label="Facebook"
+    className="social-icon-link"
+  >
+    <FaFacebook />
+  </a>
+  <a 
+    href="https://wa.me/923329580707" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    aria-label="WhatsApp"
+    className="social-icon-link"
+  >
+    <FaWhatsapp />
+  </a>
               </div>
             </div>
 

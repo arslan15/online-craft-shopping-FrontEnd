@@ -169,11 +169,8 @@ function App() {
         theme="dark" 
         transition={Slide} 
       />
-      <div className="whatsapp-widget-container" data-tooltip="Hello! Prefer to order directly?">
+      <div className="whatsapp-widget-container">
         {/* The tooltip box that appears on hover */}
-  <span className="whatsapp-tooltip-text">
-    Hello! Prefer to order directly?
-  </span>
       <WhatsAppWidget 
         phoneNumber="923329580707" // Use your full international number without + or spaces
         companyName="Customer Support"

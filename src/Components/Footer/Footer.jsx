@@ -9,7 +9,7 @@ function Footer() {
   const currentYear = new Date().getFullYear()
   const phoneNumber = "923329580707";
   const username ="asarslansaeed1";
-  const defaultMessage = encodeURIComponent("Hello! Prefer to order directly?.");
+  const defaultMessage = encodeURIComponent("Hi, I want to see your catalog");
   const instagramUrl = `https://ig.me/m/${username}?text=${encodeURIComponent(defaultMessage)}`;
 
   const getDashboardPath = () => {
@@ -21,7 +21,7 @@ function Footer() {
   const dynamicLink = getDashboardPath();
   const handleInstagramClick = (e) => {
     e.preventDefault();
-    const defaultMessage = "Hello! 👋 I have a question about your services.";
+    const defaultMessage = "Hi, I want to see your catalog";
     // Copy to clipboard
     navigator.clipboard.writeText(defaultMessage);    
     // Open Instagram DM
@@ -100,7 +100,7 @@ function Footer() {
           target="_blank" 
           rel="noopener noreferrer" 
           aria-label="Chat on WhatsApp"
-          data-tooltip="Hello! Prefer to order directly?."
+          data-tooltip="Hi, I want to see your catalog"
           className="whatsapp-float"
           style={styles.iconLink}
         >

@@ -10,7 +10,7 @@ function Footer() {
   const phoneNumber = "923329580707";
 
   const username ="asarslansaeed1";
-  const defaultMessage = encodeURIComponent("Hi, I want to see your catalog");
+  const defaultMessage = encodeURIComponent("Hi");
   const instagramUrl = `https://ig.me/m/${username}?text=${encodeURIComponent(defaultMessage)}`;
 
   const getDashboardPath = () => {
@@ -101,7 +101,7 @@ function Footer() {
           target="_blank" 
           rel="noopener noreferrer" 
           aria-label="Chat on WhatsApp"
-          data-tooltip="Hi, I want to see your catalog"
+          data-tooltip="Hi"
           className="whatsapp-float"
           style={styles.iconLink}
         >

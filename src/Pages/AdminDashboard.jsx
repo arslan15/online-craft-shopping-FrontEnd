@@ -4,6 +4,7 @@ import { FaChevronLeft, FaChevronRight, FaSearch, FaTimes } from 'react-icons/fa
 import { toast } from 'react-toastify';
 import { usePagination } from '../hooks/usePagination';
 import AnnouncementBar from '../Components/AnnoucementBar/AnnoucementBar';
+import EditUserModal from '../Components/EditUserModel/EditUserModel';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'users' | 'categories' | 'product' | 'Admin Approval' | 'settings'
@@ -21,6 +22,14 @@ const AdminDashboard = () => {
     Description: '',
     categoryType: '',
   });
+  const [selectedUser, setSelectedUser] = useState(null);
+const [isEditModalOpen, setIsEditModalOpen] = useState(true);
+
+const handleOpenEditModal = (user) => {
+  console.log("Setting selected user and opening modal:", user);
+  setSelectedUser(user);
+  setIsEditModalOpen(true);
+};
 
   const [formProductData, setFormProductData] = useState({
     productCategoryType: '',
@@ -699,14 +708,33 @@ const AdminDashboard = () => {
                               {user.isActive ? 'Active' : 'Inactive'}
                             </span>
                           </td>
-                          <td style={styles.td}>
-                            <button
-                              style={{ ...styles.actionBtn, backgroundColor: user.isActive ? '#dc2626' : '#16a34a' }}
-                              onClick={() => handleToggleActive(uId, user.isActive)}
-                            >
-                              {user.isActive ? 'Deactivate' : 'Activate'}
-                            </button>
-                          </td>
+     <td style={{ ...styles.td, whiteSpace: 'nowrap' }}>
+  <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+    <button
+      style={{ 
+        ...styles.actionBtn, 
+        backgroundColor: user.isActive ? '#dc2626' : '#16a34a',
+        padding: '6px 12px'
+      }}
+      onClick={() => handleToggleActive(uId, user.isActive)}
+    >
+      {user.isActive ? 'Deactivate' : 'Activate'}
+    </button>
+
+    <button
+      style={{ 
+        ...styles.actionBtn, 
+        backgroundColor: '#3b82f6',
+        padding: '6px 12px'
+      }}
+      onClick={() => handleOpenEditModal(user)}
+    >
+      Edit
+    </button>
+  </div>
+</td>
+                          
+                        
                         </tr>
                       );
                     })
@@ -914,7 +942,9 @@ const AdminDashboard = () => {
               </div>
             )}
             {renderPaginationBar()}
+            
           </div>
+
         )}
 
            {/* --- VIEW 6: SETTINGS --- */}
@@ -1005,6 +1035,21 @@ const AdminDashboard = () => {
   </form>
         )}
       </div>
+      {/* --- EDIT USER MODAL CHECK --- */}
+      
+            {isEditModalOpen && (
+        <EditUserModal 
+          user={selectedUser} 
+          onClose={() => setIsEditModalOpen(false)} 
+          onUpdateSuccess={(updatedUser) => {
+            // Update your users list state here so the UI refreshes
+            setUsersList((prev) =>
+              prev.map((u) => (u.id === updatedUser.id || u._id === updatedUser._id ? updatedUser : u))
+            );
+            setIsEditModalOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 };
@@ -1031,6 +1076,11 @@ const styles = {
   actionBtn: { border: 'none', color: '#fff', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' },
   input: { width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #475569', backgroundColor: '#1e293b', color: '#f8fafc', boxSizing: 'border-box' },
   button: { backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', fontWeight: 'bold' },
+  actionCell: {
+  display: 'flex',
+  gap: '12px',
+  alignItems: 'center',
+}
 };
 
 const styleCategory = {

@@ -1,5 +1,6 @@
 .product-card {
   width: 100%;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   max-width: 260px; /* Constrains card from stretching too wide */
   padding: 16px;
   box-sizing: border-box;
@@ -8,6 +9,7 @@
   align-items: center;
   border-radius: 12px;
   background-color: #ffedd5;
+  align-items: stretch;
 }
 
 .product-card:hover {

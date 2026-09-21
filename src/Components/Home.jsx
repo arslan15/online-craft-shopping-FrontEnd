@@ -1,4 +1,5 @@
-import React from 'react';
+import {React,useContext} from 'react';
+import MyContext from '../MyContext';
 import { Link } from 'react-router-dom';
 import { 
   FaRocket, 
@@ -17,7 +18,12 @@ const Home = () => {
     { id: '2', name: 'Smart Watch Pro', price: '$149.99' },
     { id: '3', name: 'Mechanical Keyboard', price: '$79.99' },
   ];
+  const { currentUser } = useContext(MyContext);
 
+  const getDashboardDestination = () => {
+    if (!currentUser) return '/login';
+    return currentUser.role === 'Admin' ? '/admin' : '/user';
+  };
   return (
     <div className="home-container">
       {/* Hero Section */}
@@ -33,9 +39,9 @@ const Home = () => {
             <FaRocket />
             <span>Get Started</span>
           </Link>
-          <Link to="/dashboard" className="btn btn-secondary">
+          <Link to={getDashboardDestination()} className="btn btn-secondary">
             <FaStore />
-            <span>View Products</span>
+            <span>{currentUser ? 'View Dashboard' : 'View Products'}</span>
           </Link>
         </div>
       </section>

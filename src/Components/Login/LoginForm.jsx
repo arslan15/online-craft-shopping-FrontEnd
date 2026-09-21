@@ -81,9 +81,13 @@ export default function LoginForm({ users = [], setUsers, onLoginSuccess }) {
           role: 'User',
           isActive: false,
         });
+const createdUser = response.data.user;
+        if (setUsers && createdUser) {
+      setUsers(prevUsers => [...prevUsers, createdUser]);
+    }
 
-        toast.success(response.data.message || 'Account created successfully!');
-        setIsLogin(true);
+    toast.success(response.data.message || 'Account created successfully!');
+    setIsLogin(true);
       }
     } catch (error) {
       if (error.response) {

@@ -9,6 +9,7 @@ import { UserAnalyticsSection } from '../Components/UserAnalyticsSection/UserAna
 import { ProductAnalyticsSection } from '../Components/ProductAnalyticsSection/ProductAnalyticsSection';
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend,CartesianGrid } from 'recharts';
+import { ContactAnalyticsEmbedded } from '../Components/ContactAnalyticsEmbedded/ContactAnalyticsEmbedded';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'users' | 'categories' | 'product' | 'Admin Approval' | 'settings'
@@ -1156,6 +1157,7 @@ const handleOpenEditModal = (user) => {
         )}
         {/* --- VIEW: CONTACT MESSAGES --- */}
 {activeTab === 'messages' && (
+  <>
   <div style={styles.tableContainer}>
     {loading ? (
       <p style={{ color: '#cbd5e1' }}>Loading messages...</p>
@@ -1201,6 +1203,8 @@ const handleOpenEditModal = (user) => {
       </table>
     )}
   </div>
+  <ContactAnalyticsEmbedded/>
+  </>
 )}
       </div>
       {/* --- EDIT USER MODAL CHECK --- */}

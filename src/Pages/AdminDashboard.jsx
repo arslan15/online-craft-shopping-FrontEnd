@@ -21,6 +21,13 @@ const AdminDashboard = () => {
   const [apiPagination, setApiPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [displayedMessagesItems, setDisplayedMessagesItems] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const [dashboardStats, setDashboardStats] = useState({
   usersCount: 0,
   productsCount: 0,
@@ -1158,52 +1165,103 @@ const handleOpenEditModal = (user) => {
         {/* --- VIEW: CONTACT MESSAGES --- */}
 {activeTab === 'messages' && (
   <>
-  <div style={styles.tableContainer}>
-    {loading ? (
-      <p style={{ color: '#cbd5e1' }}>Loading messages...</p>
-    ) : (
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.th}>ID</th>
-            <th style={styles.th}>Sender Name</th>
-            <th style={styles.th}>Email</th>
-            <th style={styles.th}>Message</th>
-            <th style={styles.th}>Date</th>
-          </tr>
-        </thead>
-        <tbody>
+    <div style={styles.tableContainer}>
+      {loading ? (
+        <p style={{ color: '#cbd5e1' }}>Loading messages...</p>
+      ) : isMobile ? (
+        
+        /* 📱 MOBILE VIEW: Card Stack Layout */
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', boxSizing: 'border-box' }}>
           {displayedMessagesItems.length > 0 ? (
             displayedMessagesItems.map((msg, index) => {
               const msgId = msg._id || msg.id;
               return (
-                <tr key={msgId || index} style={styles.tr}>
-                  <td style={styles.td}>{(currentPage - 1) * limit + index + 1}</td>
-                  <td style={styles.td}>{msg.name || msg.fullName || 'Anonymous'}</td>
-                  <td style={styles.td}>
+                <div 
+                  key={msgId || index} 
+                  style={{ 
+                    backgroundColor: '#1e293b', 
+                    padding: '14px', 
+                    borderRadius: '10px', 
+                    color: '#fff', 
+                    borderLeft: '4px solid #fbbf24', 
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                    wordBreak: 'break-word'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '6px' }}>
+                    <span>ID: {(currentPage - 1) * limit + index + 1}</span>
+                    <span>{msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : 'N/A'}</span>
+                  </div>
+                  
+                  <div style={{ fontWeight: '600', fontSize: '0.95rem', marginBottom: '4px' }}>
+                    {msg.name || msg.fullName || 'Anonymous'}
+                  </div>
+                  
+                  <div style={{ fontSize: '0.8rem', marginBottom: '8px' }}>
                     <a href={`mailto:${msg.email}`} style={{ color: '#38bdf8', textDecoration: 'none' }}>
                       {msg.email}
                     </a>
-                  </td>
-                  <td style={{ ...styles.td, maxWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                  </div>
+                  
+                  <div style={{ fontSize: '0.8rem', color: '#cbd5e1', backgroundColor: '#0f172a', padding: '8px 10px', borderRadius: '6px', lineHeight: '1.4' }}>
                     {msg.message || msg.content}
-                  </td>
-                  <td style={styles.td}>
-                    {msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : 'N/A'}
-                  </td>
-                </tr>
+                  </div>
+                </div>
               );
             })
           ) : (
-            <tr>
-              <td colSpan="6" style={{ ...styles.td, textAlign: 'center' }}>No contact messages found.</td>
-            </tr>
+            <p style={{ color: '#cbd5e1', textAlign: 'center', padding: '20px' }}>No contact messages found.</p>
           )}
-        </tbody>
-      </table>
-    )}
-  </div>
-  <ContactAnalyticsEmbedded/>
+        </div>
+
+      ) : (
+        
+        /* 💻 LAPTOP / DESKTOP VIEW: Original Table Layout with Horizontal Scroll */
+        <div style={{ width: '100%', overflowX: 'auto' }}>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>ID</th>
+                <th style={styles.th}>Sender Name</th>
+                <th style={styles.th}>Email</th>
+                <th style={styles.th}>Message</th>
+                <th style={styles.th}>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayedMessagesItems.length > 0 ? (
+                displayedMessagesItems.map((msg, index) => {
+                  const msgId = msg._id || msg.id;
+                  return (
+                    <tr key={msgId || index} style={styles.tr}>
+                      <td style={styles.td}>{(currentPage - 1) * limit + index + 1}</td>
+                      <td style={styles.td}>{msg.name || msg.fullName || 'Anonymous'}</td>
+                      <td style={styles.td}>
+                        <a href={`mailto:${msg.email}`} style={{ color: '#38bdf8', textDecoration: 'none' }}>
+                          {msg.email}
+                        </a>
+                      </td>
+                      <td style={{ ...styles.td, maxWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                        {msg.message || msg.content}
+                      </td>
+                      <td style={styles.td}>
+                        {msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : 'N/A'}
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="5" style={{ ...styles.td, textAlign: 'center' }}>No contact messages found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+      )}
+    </div>
+    <ContactAnalyticsEmbedded />
   </>
 )}
       </div>

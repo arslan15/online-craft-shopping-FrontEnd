@@ -36,6 +36,7 @@ function Contact() {
 
     try {
       const baseUrl = process.env.REACT_APP_CONTACT_API_BASE_URL || '';
+      
       const response = await axios.post(`${baseUrl}/contact`, formData);
 
       if (response.status === 200 || response.status === 201) {

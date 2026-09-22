@@ -9,7 +9,6 @@ export function ProductAnalyticsSection() {
   useEffect(() => {
     const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
 
-    // Adjust your endpoint URL to match your product backend route (e.g., /products or /products/all)
     axios.get(`${process.env.REACT_APP_API_BASE_URL}/Products`, {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -61,10 +60,17 @@ export function ProductAnalyticsSection() {
   }, []);
 
   return (
-    <div style={{ marginTop: '30px', display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
+    <div style={{ 
+      marginTop: '30px', 
+      marginBottom: '30px',
+      display: 'grid', 
+      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+      gap: '20px', 
+      alignItems: 'start' 
+    }}>
       
       {/* Product Chart Component */}
-      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', width: '100%', boxSizing: 'border-box' }}>
         <h4 style={{ marginBottom: '15px', fontSize: '1.1rem' }}>Product Additions Trend (By Date)</h4>
         <div style={{ width: '100%', height: 260 }}>
           <ResponsiveContainer>
@@ -73,25 +79,29 @@ export function ProductAnalyticsSection() {
               <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} />
               <YAxis stroke="#94a3b8" allowDecimals={false} fontSize={12} />
               <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff' }} />
-              <Bar dataKey="productsAdded" fill="#34d399" radius={[4, 4, 0, 0]} barSize={14} />
+              <Bar dataKey="productsAdded" fill="#34d399" radius={[4, 4, 0, 0]} barSize={16} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Recent Products Feed Component */}
-      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', width: '100%', boxSizing: 'border-box' }}>
         <h4 style={{ marginBottom: '15px', fontSize: '1.1rem' }}>Recently Added Products</h4>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {recentProducts.map((product) => (
-            <div key={product._id} style={{ backgroundColor: '#0f172a', padding: '8px 12px', borderRadius: '8px', borderLeft: '4px solid #34d399' }}>
-              <div style={{ fontWeight: '600', fontSize: '0.9rem' }}>{product.name || product.title}</div>
-              <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Price: ${product.price}</div>
-              <div style={{ fontSize: '0.65rem', color: '#34d399', marginTop: '2px' }}>
-                Added: {product.createdAt ? (product.createdAt.$date || product.createdAt).split('T')[0] : 'N/A'}
+          {recentProducts.length > 0 ? (
+            recentProducts.map((product) => (
+              <div key={product._id} style={{ backgroundColor: '#0f172a', padding: '10px 14px', borderRadius: '8px', borderLeft: '4px solid #34d399' }}>
+                <div style={{ fontWeight: '600', fontSize: '0.9rem', marginBottom: '4px' }}>{product.name || product.title}</div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Price: ${product.price}</div>
+                <div style={{ fontSize: '0.65rem', color: '#34d399', marginTop: '6px' }}>
+                  Added: {product.createdAt ? (product.createdAt.$date || product.createdAt).split('T')[0] : 'N/A'}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>No recent products</div>
+          )}
         </div>
       </div>
 

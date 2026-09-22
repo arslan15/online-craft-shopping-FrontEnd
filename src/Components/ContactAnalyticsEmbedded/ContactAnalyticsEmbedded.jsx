@@ -59,11 +59,18 @@ export function ContactAnalyticsEmbedded() {
       });
   }, []);
 
-  return (
-    <div style={{ marginTop: '20px', marginBottom: '30px', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', alignItems: 'start' }}>
+ return (
+    <div style={{ 
+      marginTop: '20px', 
+      marginBottom: '30px', 
+      display: 'grid', 
+      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+      gap: '20px', 
+      alignItems: 'start' 
+    }}>
       
-      {/* Chart View (Using an amber/yellow accent color for messages) */}
-      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+      {/* Chart View */}
+      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', width: '100%', boxSizing: 'border-box' }}>
         <h4 style={{ marginBottom: '15px', fontSize: '1.1rem' }}>Contact Messages Trend (By Date)</h4>
         <div style={{ width: '100%', height: 260 }}>
           <ResponsiveContainer>
@@ -79,7 +86,7 @@ export function ContactAnalyticsEmbedded() {
       </div>
 
       {/* Recent Messages Feed View */}
-      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', width: '100%', boxSizing: 'border-box' }}>
         <h4 style={{ marginBottom: '15px', fontSize: '1.1rem' }}>Recent Messages</h4>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {recentMessages.length > 0 ? (

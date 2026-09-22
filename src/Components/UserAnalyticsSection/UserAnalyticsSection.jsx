@@ -63,39 +63,48 @@ export function UserAnalyticsSection() {
   }, []);
 
   return (
-    <div style={{ marginTop: '30px', display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px' }}>
+    <div style={{ 
+      marginTop: '30px', 
+      marginBottom: '30px',
+      display: 'grid', 
+      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+      gap: '20px', 
+      alignItems: 'start' 
+    }}>
       
       {/* Chart Component */}
-      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', width: '100%', boxSizing: 'border-box' }}>
         <h4 style={{ marginBottom: '15px', fontSize: '1.1rem' }}>User Registrations Trend (By Date)</h4>
         <div style={{ width: '100%', height: 260 }}>
           <ResponsiveContainer>
-            {/* Added barCategoryGap="20%" to pull the bars closer to each other */}
             <BarChart data={chartData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }} barCategoryGap="20%">
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} />
               <YAxis stroke="#94a3b8" allowDecimals={false} fontSize={12} />
               <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff' }} />
-              {/* Reduced barSize to 14 for a thinner profile */}
-              <Bar dataKey="usersAdded" fill="#38bdf8" radius={[4, 4, 0, 0]} barSize={14} />
+              <Bar dataKey="usersAdded" fill="#38bdf8" radius={[4, 4, 0, 0]} barSize={16} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Recent User Activity Feed Component */}
-      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}>
+      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', width: '100%', boxSizing: 'border-box' }}>
         <h4 style={{ marginBottom: '15px', fontSize: '1.1rem' }}>Recent Signups</h4>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {recentUsers.map((user) => (
-            <div key={user._id} style={{ backgroundColor: '#0f172a', padding: '8px 12px', borderRadius: '8px', borderLeft: '4px solid #38bdf8' }}>
-              <div style={{ fontWeight: '600', fontSize: '0.9rem' }}>{user.name}</div>
-              <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{user.email}</div>
-              <div style={{ fontSize: '0.65rem', color: '#38bdf8', marginTop: '2px' }}>
-                Joined: {user.createdAt ? (user.createdAt.$date || user.createdAt).split('T')[0] : 'N/A'} ({user.role})
+          {recentUsers.length > 0 ? (
+            recentUsers.map((user) => (
+              <div key={user._id} style={{ backgroundColor: '#0f172a', padding: '10px 14px', borderRadius: '8px', borderLeft: '4px solid #38bdf8' }}>
+                <div style={{ fontWeight: '600', fontSize: '0.9rem', marginBottom: '4px' }}>{user.name}</div>
+                <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{user.email}</div>
+                <div style={{ fontSize: '0.65rem', color: '#38bdf8', marginTop: '6px' }}>
+                  Joined: {user.createdAt ? (user.createdAt.$date || user.createdAt).split('T')[0] : 'N/A'} ({user.role})
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>No recent users</div>
+          )}
         </div>
       </div>
 

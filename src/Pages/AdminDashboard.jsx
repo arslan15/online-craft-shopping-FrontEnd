@@ -1170,53 +1170,77 @@ const handleOpenEditModal = (user) => {
         <p style={{ color: '#cbd5e1' }}>Loading messages...</p>
       ) : isMobile ? (
         
-        /* 📱 MOBILE VIEW: Card Stack Layout */
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', boxSizing: 'border-box' }}>
+        /* 📱 MOBILE / IPHONE CARD VIEW (Triggered for screen widths < 1024px) */
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', width: '100%', boxSizing: 'border-box' }}>
           {displayedMessagesItems.length > 0 ? (
             displayedMessagesItems.map((msg, index) => {
               const msgId = msg._id || msg.id;
+              const senderName = msg.name || msg.fullName || 'Anonymous';
+              const messageText = msg.message || msg.content || msg.text || 'No content provided';
+              const dateStr = msg.createdAt ? new Date(msg.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
+              
               return (
                 <div 
                   key={msgId || index} 
                   style={{ 
                     backgroundColor: '#1e293b', 
-                    padding: '14px', 
-                    borderRadius: '10px', 
+                    borderRadius: '12px', 
+                    padding: '16px', 
                     color: '#fff', 
-                    borderLeft: '4px solid #fbbf24', 
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+                    border: '1px solid #334155',
+                    borderLeft: '5px solid #fbbf24',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px',
                     wordBreak: 'break-word'
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '6px' }}>
-                    <span>ID: {(currentPage - 1) * limit + index + 1}</span>
-                    <span>{msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : 'N/A'}</span>
+                  {/* Top row: ID badge & Date */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.7rem', backgroundColor: '#0f172a', padding: '2px 8px', borderRadius: '4px', color: '#94a3b8', fontWeight: '600' }}>
+                      #{(currentPage - 1) * limit + index + 1}
+                    </span>
+                    <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                      {dateStr}
+                    </span>
                   </div>
-                  
-                  <div style={{ fontWeight: '600', fontSize: '0.95rem', marginBottom: '4px' }}>
-                    {msg.name || msg.fullName || 'Anonymous'}
-                  </div>
-                  
-                  <div style={{ fontSize: '0.8rem', marginBottom: '8px' }}>
-                    <a href={`mailto:${msg.email}`} style={{ color: '#38bdf8', textDecoration: 'none' }}>
+
+                  {/* Sender Info */}
+                  <div>
+                    <div style={{ fontSize: '1rem', fontWeight: '700', color: '#f8fafc', marginBottom: '2px' }}>
+                      {senderName}
+                    </div>
+                    <a href={`mailto:${msg.email}`} style={{ fontSize: '0.8rem', color: '#38bdf8', textDecoration: 'none', wordBreak: 'break-all' }}>
                       {msg.email}
                     </a>
                   </div>
-                  
-                  <div style={{ fontSize: '0.8rem', color: '#cbd5e1', backgroundColor: '#0f172a', padding: '8px 10px', borderRadius: '6px', lineHeight: '1.4' }}>
-                    {msg.message || msg.content}
+
+                  {/* Message Content Bubble - Guaranteed to show */}
+                  <div style={{ 
+                    fontSize: '0.85rem', 
+                    color: '#cbd5e1', 
+                    backgroundColor: '#0f172a', 
+                    padding: '10px 12px', 
+                    borderRadius: '8px', 
+                    lineHeight: '1.5',
+                    border: '1px solid #1e293b'
+                  }}>
+                    {messageText}
                   </div>
                 </div>
               );
             })
           ) : (
-            <p style={{ color: '#cbd5e1', textAlign: 'center', padding: '20px' }}>No contact messages found.</p>
+            <div style={{ textAlign: 'center', padding: '30px', color: '#94a3b8', backgroundColor: '#1e293b', borderRadius: '12px' }}>
+              No contact messages found.
+            </div>
           )}
         </div>
 
       ) : (
         
-        /* 💻 LAPTOP / DESKTOP VIEW: Original Table Layout with Horizontal Scroll */
+        /* 💻 DESKTOP LAPTOP VIEW ONLY */
         <div style={{ width: '100%', overflowX: 'auto' }}>
           <table style={styles.table}>
             <thead>
@@ -1242,7 +1266,7 @@ const handleOpenEditModal = (user) => {
                         </a>
                       </td>
                       <td style={{ ...styles.td, maxWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word' }}>
-                        {msg.message || msg.content}
+                        {msg.message || msg.content || msg.text}
                       </td>
                       <td style={styles.td}>
                         {msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : 'N/A'}

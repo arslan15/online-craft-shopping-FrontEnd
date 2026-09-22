@@ -5,6 +5,15 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 export function ProductAnalyticsSection() {
   const [chartData, setChartData] = useState([]);
   const [recentProducts, setRecentProducts] = useState([]);
+  
+  // Track mobile view explicitly to force single-column stacking
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
@@ -64,7 +73,7 @@ export function ProductAnalyticsSection() {
       marginTop: '30px', 
       marginBottom: '30px',
       display: 'grid', 
-      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+      gridTemplateColumns: isMobile ? '1fr' : '1.2fr 1fr', 
       gap: '20px', 
       alignItems: 'start' 
     }}>

@@ -5,6 +5,10 @@ import { toast } from 'react-toastify';
 import { usePagination } from '../hooks/usePagination';
 import AnnouncementBar from '../Components/AnnoucementBar/AnnoucementBar';
 import EditUserModal from '../Components/EditUserModel/EditUserModel';
+import { UserAnalyticsSection } from '../Components/UserAnalyticsSection/UserAnalyticsSection';
+import { ProductAnalyticsSection } from '../Components/ProductAnalyticsSection/ProductAnalyticsSection';
+
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend,CartesianGrid } from 'recharts';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'users' | 'categories' | 'product' | 'Admin Approval' | 'settings'
@@ -649,6 +653,8 @@ const handleOpenEditModal = (user) => {
 
         {/* --- VIEW 1: OVERVIEW DASHBOARD --- */}
         {activeTab === 'overview' && (
+
+          <>
           <div style={styles.grid}>
             <div style={{ ...styles.infoBox, cursor: 'pointer' }} onClick={() => handleTabChange('users')}>
               <h4 style={styles.boxTitle}>User Management &rarr;</h4>
@@ -712,6 +718,8 @@ const handleOpenEditModal = (user) => {
       </div>
     </div>
           </div>
+<UserAnalyticsSection />
+</>
         )}
 
         {/* --- VIEW 2: ORDER APPROVAL --- */}
@@ -932,6 +940,7 @@ const handleOpenEditModal = (user) => {
 
         {/* --- VIEW 5: PRODUCT MANAGEMENT --- */}
         {activeTab === 'product' && (
+          <>
           <div>
             <form onSubmit={handleProductSubmit} style={styleProduct.form}>
               <fieldset style={styleProduct.fieldset}>
@@ -1054,7 +1063,8 @@ const handleOpenEditModal = (user) => {
             {renderPaginationBar()}
             
           </div>
-
+          <ProductAnalyticsSection/>
+</>
         )}
 
            {/* --- VIEW 6: SETTINGS --- */}
@@ -1211,6 +1221,7 @@ const handleOpenEditModal = (user) => {
     </div>
   );
 };
+
 
 const styles = {
   container: { padding: '20px', backgroundColor: '#020617', minHeight: '100vh', color: '#f8fafc' },

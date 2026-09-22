@@ -5,6 +5,15 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 export function UserAnalyticsSection() {
   const [chartData, setChartData] = useState([]);
   const [recentUsers, setRecentUsers] = useState([]);
+  
+  // Track mobile view explicitly to force single-column stacking
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem('token') || localStorage.getItem('accessToken');
@@ -23,7 +32,7 @@ export function UserAnalyticsSection() {
           return createdAtField;
         };
 
-        // Filter out Admin users securely (handles case variations like "admin" or "Admin")
+        // Filter out Admin users securely
         const regularUsers = users.filter(user => {
           const role = user.role ? user.role.toLowerCase() : '';
           return role !== 'admin';
@@ -67,7 +76,8 @@ export function UserAnalyticsSection() {
       marginTop: '30px', 
       marginBottom: '30px',
       display: 'grid', 
-      gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+      // Switches cleanly to a single column on mobile screens (<768px)
+      gridTemplateColumns: isMobile ? '1fr' : '1.2fr 1fr', 
       gap: '20px', 
       alignItems: 'start' 
     }}>

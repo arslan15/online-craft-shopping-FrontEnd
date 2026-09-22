@@ -16,6 +16,12 @@ const AdminDashboard = () => {
   const [apiPagination, setApiPagination] = useState(null);
   const [loading, setLoading] = useState(false);
   const [displayedMessagesItems, setDisplayedMessagesItems] = useState([]);
+  const [dashboardStats, setDashboardStats] = useState({
+  usersCount: 0,
+  productsCount: 0,
+  ordersCount: 0,
+  messagesCount: 0,
+});
 
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -90,6 +96,31 @@ const handleOpenEditModal = (user) => {
     initialLimit: 10,
     serverPagination: isServerPaginated ? apiPagination : null,
   });
+
+
+  const fetchDashboardStats = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/admin/stats`, {
+        headers: getAuthHeader(),
+      });
+      if (response.data && response.data.success) {
+        setDashboardStats({
+          usersCount: response.data.usersCount || 0,
+          productsCount: response.data.productsCount || 0,
+          ordersCount: response.data.ordersCount || 0,
+          messagesCount: response.data.messagesCount || 0,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'overview') {
+      fetchDashboardStats();
+    }
+  }, [activeTab]);
 
   const handleTabChange = (tabName) => {
     startTransition(() => {
@@ -639,6 +670,47 @@ const handleOpenEditModal = (user) => {
   <h4 style={styles.boxTitle}>Contact Messages &rarr;</h4>
   <p style={styles.boxDesc}>Review and respond to inquiries sent by customers.</p>
 </div>
+
+{/* --- GENERIC OVERVIEW ANALYTICS / CHART CARDS --- */}
+    
+    {/* Users Summary Chart Card */}
+    <div style={styles.infoBox}>
+      <h4 style={styles.boxTitle}>Users Analytics</h4>
+      <p style={styles.boxDesc}>Total Registered: <strong>{dashboardStats.usersCount}</strong></p>
+      {/* Visual Bar Representation */}
+      <div style={styles.chartTrack}>
+        <div style={{ width: '100%', backgroundColor: '#38bdf8', height: '100%', borderRadius: '4px' }} />
+      </div>
+    </div>
+
+    {/* Products Summary Chart Card */}
+    <div style={styles.infoBox}>
+      <h4 style={styles.boxTitle}>Products Overview</h4>
+      <p style={styles.boxDesc}>Active Categories/Items</p>
+        <p style={styles.boxDesc}>Total Products: <strong>{dashboardStats.productsCount}</strong></p>
+      <div style={styles.chartTrack}>
+        <div style={{ width: '75%', backgroundColor: '#4ade80', height: '100%', borderRadius: '4px' }} />
+      </div>
+    </div>
+
+    {/* Orders Summary Chart Card */}
+    <div style={styles.infoBox}>
+      <h4 style={styles.boxTitle}>Orders Status</h4>
+      <p style={styles.boxDesc}>Pending & Approved Breakdown</p>
+      <p style={styles.boxDesc}>Total Order : <strong>{dashboardStats.ordersCount}</strong></p>
+      <div style={styles.chartTrack}>
+        <div style={{ width: '60%', backgroundColor: '#facc15', height: '100%', borderRadius: '4px' }} />
+      </div>
+    </div>
+
+    {/* Contact Messages Summary Chart Card */}
+    <div style={styles.infoBox}>
+      <h4 style={styles.boxTitle}>Contact Inquiries</h4>
+      <p style={styles.boxDesc}>Total Messages: <strong>{dashboardStats.messagesCount}</strong></p>
+      <div style={styles.chartTrack}>
+        <div style={{ width: `${Math.min(displayedItems.length * 10, 100)}%`, backgroundColor: '#f472b6', height: '100%', borderRadius: '4px' }} />
+      </div>
+    </div>
           </div>
         )}
 
@@ -1152,6 +1224,14 @@ const styles = {
   infoBox: { backgroundColor: '#1e293b', padding: '16px', borderRadius: '6px', border: '1px solid #334155' },
   boxTitle: { margin: '0 0 8px 0', color: '#f8fafc' },
   boxDesc: { margin: 0, fontSize: '0.85rem', color: '#94a3b8' },
+  chartTrack: {
+    width: '100%',
+    height: '6px',
+    backgroundColor: '#334155',
+    borderRadius: '4px',
+    marginTop: '12px',
+    overflow: 'hidden'
+  },
   tableContainer: { overflowX: 'auto' },
   table: { width: '100%', borderCollapse: 'collapse', textAlign: 'left' },
   th: { padding: '10px', backgroundColor: '#1e293b', color: '#cbd5e1', fontSize: '0.85rem', borderBottom: '1px solid #334155' },
@@ -1163,10 +1243,10 @@ const styles = {
   input: { width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #475569', backgroundColor: '#1e293b', color: '#f8fafc', boxSizing: 'border-box' },
   button: { backgroundColor: '#0284c7', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', fontWeight: 'bold' },
   actionCell: {
-  display: 'flex',
-  gap: '12px',
-  alignItems: 'center',
-}
+    display: 'flex',
+    gap: '12px',
+    alignItems: 'center',
+  }
 };
 
 const styleCategory = {

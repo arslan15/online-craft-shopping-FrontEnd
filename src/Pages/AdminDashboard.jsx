@@ -15,6 +15,7 @@ const AdminDashboard = () => {
   const [isPending, startTransition] = useTransition();
   const [apiPagination, setApiPagination] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [displayedMessagesItems, setDisplayedMessagesItems] = useState([]);
 
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -30,6 +31,7 @@ const handleOpenEditModal = (user) => {
   setSelectedUser(user);
   setIsEditModalOpen(true);
 };
+
 
   const [formProductData, setFormProductData] = useState({
     productCategoryType: '',
@@ -103,6 +105,34 @@ const handleOpenEditModal = (user) => {
     const token = rawToken ? rawToken.replace(/^["']|["']$/g, '').trim() : '';
     return { Authorization: `Bearer ${token}` };
   };
+ useEffect(() => {
+    if (activeTab !== 'messages') return;
+
+    const fetchMessages = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`${BASE_URL}/admin/messages?page=${currentPage}&limit=${limit}`, {
+          headers: getAuthHeader(),
+        });
+        const rawData = response.data;
+        
+        // Safely extracts the array from your backend response object ({ success: true, count: X, data: [...] })
+        if (rawData && Array.isArray(rawData.data)) {
+          setDisplayedMessagesItems(rawData.data);
+        } else if (Array.isArray(rawData)) {
+          setDisplayedMessagesItems(rawData);
+        } else {
+          setDisplayedMessagesItems([]);
+        }
+      } catch (error) {
+        toast.error('Failed to fetch contact messages');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, [activeTab, currentPage, limit, BASE_URL]);
 
   // 1. Fetch Users
   useEffect(() => {
@@ -568,7 +598,9 @@ const handleOpenEditModal = (user) => {
             ? 'Product Management'
             : activeTab === 'Admin Approval'
             ? 'Order Approval Management'
-            : 'System Settings'}
+           : activeTab === 'messages'
+    ? 'Customer Inquiries'
+    : 'System Settings'}
         </h2>
         <p style={styles.subtext}>
           {activeTab === 'overview'
@@ -579,7 +611,9 @@ const handleOpenEditModal = (user) => {
             ? 'Creating new Products'
             : activeTab === 'Admin Approval'
             ? 'Order Approval from Admin'
-            : 'Configure application parameters, access controls, and maintenance modes.'}
+           : activeTab === 'messages'
+    ? 'Review and manage incoming support and contact requests from the store.'
+    : 'Configure application parameters, access controls, and maintenance modes.'}
         </p>
 
         {/* --- VIEW 1: OVERVIEW DASHBOARD --- */}
@@ -601,6 +635,10 @@ const handleOpenEditModal = (user) => {
               <h4 style={styles.boxTitle}>System Settings &rarr;</h4>
               <p style={styles.boxDesc}>Configure application parameters and controls.</p>
             </div>
+            <div style={{ ...styles.infoBox, cursor: 'pointer' }} onClick={() => handleTabChange('messages')}>
+  <h4 style={styles.boxTitle}>Contact Messages &rarr;</h4>
+  <p style={styles.boxDesc}>Review and respond to inquiries sent by customers.</p>
+</div>
           </div>
         )}
 
@@ -1034,6 +1072,54 @@ const handleOpenEditModal = (user) => {
     </button>
   </form>
         )}
+        {/* --- VIEW: CONTACT MESSAGES --- */}
+{activeTab === 'messages' && (
+  <div style={styles.tableContainer}>
+    {loading ? (
+      <p style={{ color: '#cbd5e1' }}>Loading messages...</p>
+    ) : (
+      <table style={styles.table}>
+        <thead>
+          <tr>
+            <th style={styles.th}>ID</th>
+            <th style={styles.th}>Sender Name</th>
+            <th style={styles.th}>Email</th>
+            <th style={styles.th}>Message</th>
+            <th style={styles.th}>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {displayedMessagesItems.length > 0 ? (
+            displayedMessagesItems.map((msg, index) => {
+              const msgId = msg._id || msg.id;
+              return (
+                <tr key={msgId || index} style={styles.tr}>
+                  <td style={styles.td}>{(currentPage - 1) * limit + index + 1}</td>
+                  <td style={styles.td}>{msg.name || msg.fullName || 'Anonymous'}</td>
+                  <td style={styles.td}>
+                    <a href={`mailto:${msg.email}`} style={{ color: '#38bdf8', textDecoration: 'none' }}>
+                      {msg.email}
+                    </a>
+                  </td>
+                  <td style={{ ...styles.td, maxWidth: '300px', whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                    {msg.message || msg.content}
+                  </td>
+                  <td style={styles.td}>
+                    {msg.createdAt ? new Date(msg.createdAt).toLocaleDateString() : 'N/A'}
+                  </td>
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan="6" style={{ ...styles.td, textAlign: 'center' }}>No contact messages found.</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    )}
+  </div>
+)}
       </div>
       {/* --- EDIT USER MODAL CHECK --- */}
       

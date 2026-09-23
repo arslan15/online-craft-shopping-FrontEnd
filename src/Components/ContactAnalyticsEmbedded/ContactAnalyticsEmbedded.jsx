@@ -5,8 +5,6 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGri
 export function ContactAnalyticsEmbedded() {
   const [chartData, setChartData] = useState([]);
   const [recentMessages, setRecentMessages] = useState([]);
-  
-  // Track mobile view explicitly to force single-column stacking
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
@@ -35,7 +33,6 @@ export function ContactAnalyticsEmbedded() {
           return createdAtField;
         };
 
-        // 1. Group for Recharts using 'createdAt'
         const dateMap = {};
         messages.forEach(msg => {
           const dateStr = getDateString(msg.createdAt);
@@ -54,7 +51,6 @@ export function ContactAnalyticsEmbedded() {
 
         setChartData(formattedData);
         
-        // 2. Grab latest 4 messages for the recent feed
         const sortedByDate = [...messages].sort((a, b) => {
           const dateA = new Date(getDateString(a.createdAt) || 0);
           const dateB = new Date(getDateString(b.createdAt) || 0);
@@ -73,16 +69,17 @@ export function ContactAnalyticsEmbedded() {
       marginTop: '20px', 
       marginBottom: '30px', 
       display: 'grid', 
-      gridTemplateColumns: isMobile ? '1fr' : '1.2fr 1fr', 
+      gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1.2fr) minmax(0, 1fr)', 
       gap: '20px', 
-      alignItems: 'start' 
+      alignItems: 'start',
+      width: '100%'
     }}>
       
-      {/* Chart View */}
-      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', width: '100%', boxSizing: 'border-box' }}>
+      {/* Chart View with minWidth safety */}
+      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', width: '100%', boxSizing: 'border-box', minWidth: 0 }}>
         <h4 style={{ marginBottom: '15px', fontSize: '1.1rem' }}>Contact Messages Trend (By Date)</h4>
         <div style={{ width: '100%', height: 260 }}>
-          <ResponsiveContainer>
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }} barCategoryGap="20%">
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} />
@@ -95,7 +92,7 @@ export function ContactAnalyticsEmbedded() {
       </div>
 
       {/* Recent Messages Feed View */}
-      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', width: '100%', boxSizing: 'border-box' }}>
+      <div style={{ backgroundColor: '#1e293b', padding: '20px', borderRadius: '12px', color: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', width: '100%', boxSizing: 'border-box', minWidth: 0 }}>
         <h4 style={{ marginBottom: '15px', fontSize: '1.1rem' }}>Recent Messages</h4>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {recentMessages.length > 0 ? (
@@ -106,7 +103,7 @@ export function ContactAnalyticsEmbedded() {
                   {msg.message || msg.content}
                 </div>
                 <div style={{ fontSize: '0.65rem', color: '#fbbf24', marginTop: '6px' }}>
-                  Received: {msg.createdAt ? (msg.createdAt.$date || msg.createdAt).split('T')[0] : 'N/A'}
+                  Holder: {msg.createdAt ? (msg.createdAt.$date || msg.createdAt).split('T')[0] : 'N/A'}
                 </div>
               </div>
             ))

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaEye, FaEyeSlash, FaArrowLeft } from 'react-icons/fa';
 
 export default function LoginForm({ users = [], setUsers, onLoginSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
+  const [loginStep, setLoginStep] = useState(1); // 1: Credentials, 2: OTP Entry
   const [isLoading, setIsLoading] = useState(false);
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const firstInputRef = useRef(null);
@@ -15,13 +16,14 @@ export default function LoginForm({ users = [], setUsers, onLoginSuccess }) {
     email: '',
     password: '',
     confirmPassword: '',
+    otp: '', // Added otp field
   });
 
   useEffect(() => {
     if (firstInputRef.current) {
       firstInputRef.current.focus();
     }
-  }, [isLogin]);
+  }, [isLogin, loginStep]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,15 +35,26 @@ export default function LoginForm({ users = [], setUsers, onLoginSuccess }) {
 
     try {
       if (isLogin) {
-        // --- ACTION: SIGN IN ---
+        // --- ACTION: SIGN IN (Handles both Step 1 & Step 2) ---
         const response = await axios.post(BASE_URL + '/login', {
           email: formData.email,
           password: formData.password,
+          otp: formData.otp // Blank on Step 1, filled with code on Step 2
         });
+
+        // 1. If backend says we need an OTP (Step 1 complete)
+        if (response.data.requiresOtp) {
+          toast.success(response.data.message || 'OTP sent to your email.');
+          setLoginStep(2); // Switch view to show OTP input field
+          setIsLoading(false);
+          return;
+        }
+
+        // 2. If OTP was correct, complete the login (Step 2 complete)
         const { token, ...user } = response.data.user;
 
         if (!user) {
-          toast.error("Invalid email or password");
+          toast.error("Invalid user data received");
           return;
         }
 
@@ -49,10 +62,13 @@ export default function LoginForm({ users = [], setUsers, onLoginSuccess }) {
           toast.error("Your account is currently inactive.");
           return;
         }
+
         localStorage.setItem('token', token);
         if (onLoginSuccess) {
           onLoginSuccess(user);
         }
+        toast.success(response.data.message || 'Login successful!');
+
       } else {
         // --- ACTION: SIGN UP ---
         if (formData.password !== formData.confirmPassword) {
@@ -60,19 +76,6 @@ export default function LoginForm({ users = [], setUsers, onLoginSuccess }) {
           return;
         }
 
-        const newUser = {
-          id: Date.now(),
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          confirmPassword: formData.confirmPassword,
-          role: 'User',
-          isActive: false,
-        };
-
-        if (setUsers) {
-          setUsers([...users, newUser]);
-        }
         const response = await axios.post(`${BASE_URL}/register`, {
           name: formData.name,
           email: formData.email,
@@ -81,20 +84,22 @@ export default function LoginForm({ users = [], setUsers, onLoginSuccess }) {
           role: 'User',
           isActive: false,
         });
-const createdUser = response.data.user;
-        if (setUsers && createdUser) {
-      setUsers(prevUsers => [...prevUsers, createdUser]);
-    }
 
-    toast.success(response.data.message || 'Account created successfully!');
-    setIsLogin(true);
+        const createdUser = response.data.user;
+        if (setUsers && createdUser) {
+          setUsers(prevUsers => [...prevUsers, createdUser]);
+        }
+
+        toast.success(response.data.message || 'Account created successfully!');
+        setIsLogin(true);
+        setLoginStep(1);
       }
     } catch (error) {
       if (error.response) {
         if (error.response.status === 403) {
           toast.info(error.response.data.message);
         } else {
-          toast.error(error.response.data.message || 'Registration failed.');
+          toast.error(error.response.data.message || 'Operation failed.');
         }
       } else {
         toast.error('Network error. Server unreachable.');
@@ -111,11 +116,19 @@ const createdUser = response.data.user;
         <div style={styles.card}>
           {/* Header Section */}
           <div style={styles.headerGroup}>
-            <h2 style={styles.title}>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+            <h2 style={styles.title}>
+              {!isLogin 
+                ? 'Create Account' 
+                : loginStep === 1 
+                  ? 'Welcome Back' 
+                  : 'Two-Step Verification'}
+            </h2>
             <p style={styles.subtitle}>
-              {isLogin
-                ? 'Please enter your credentials to access your account'
-                : 'Fill in your details below to get started'}
+              {!isLogin 
+                ? 'Fill in your details below to get started' 
+                : loginStep === 1 
+                  ? 'Please enter your credentials to access your account' 
+                  : `Enter the 6-digit code sent to ${formData.email}`}
             </p>
           </div>
 
@@ -136,45 +149,49 @@ const createdUser = response.data.user;
             </div>
           )}
 
-          {/* Email Address */}
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Email Address</label>
-            <input
-              ref={isLogin ? firstInputRef : null}
-              type="email"
-              name="email"
-              placeholder="name@company.com"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
-          </div>
-
-          {/* Password Field */}
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Password</label>
-            <div style={{ position: 'relative', width: '100%' }}>
+          {/* Email Address (Shown on Sign Up, and Login Step 1) */}
+          {(!isLogin || (isLogin && loginStep === 1)) && (
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>Email Address</label>
               <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                placeholder="••••••••"
-                value={formData.password}
+                ref={isLogin && loginStep === 1 ? firstInputRef : null}
+                type="email"
+                name="email"
+                placeholder="name@company.com"
+                value={formData.email}
                 onChange={handleChange}
                 required
-                style={{ ...styles.input, paddingRight: '42px' }}
+                style={styles.input}
               />
-              <span
-                onClick={() => setShowPassword(!showPassword)}
-                style={styles.eyeIcon}
-                aria-label="Toggle password visibility"
-              >
-                {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
-              </span>
             </div>
-          </div>
+          )}
 
-          {/* Confirm Password Field */}
+          {/* Password Field (Shown on Sign Up, and Login Step 1) */}
+          {(!isLogin || (isLogin && loginStep === 1)) && (
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>Password</label>
+              <div style={{ position: 'relative', width: '100%' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  style={{ ...styles.input, paddingRight: '42px' }}
+                />
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIcon}
+                  aria-label="Toggle password visibility"
+                >
+                  {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Confirm Password Field (Sign Up only) */}
           {!isLogin && (
             <div style={styles.inputGroup}>
               <label style={styles.label}>Confirm Password</label>
@@ -199,26 +216,71 @@ const createdUser = response.data.user;
             </div>
           )}
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            style={{
-              ...styles.button,
-              opacity: isLoading ? 0.7 : 1,
-              cursor: isLoading ? 'not-allowed' : 'pointer',
-            }}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Processing...' : isLogin ? 'Sign In' : 'Sign Up'}
-          </button>
+          {/* OTP Entry Field (Login Step 2 only) */}
+          {isLogin && loginStep === 2 && (
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>OTP Verification Code</label>
+              <input
+                ref={firstInputRef}
+                type="text"
+                name="otp"
+                maxLength="6"
+                placeholder="123456"
+                value={formData.otp}
+                onChange={handleChange}
+                required
+                style={{ 
+                  ...styles.input, 
+                  textAlign: 'center', 
+                  letterSpacing: '4px', 
+                  fontSize: '1.2rem',
+                  fontWeight: 'bold'
+                }}
+              />
+            </div>
+          )}
+
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', gap: '10px' }}>
+            {isLogin && loginStep === 2 && (
+              <button
+                type="button"
+                onClick={() => setLoginStep(1)}
+                style={{ ...styles.button, background: '#334155', flex: 1 }}
+              >
+                <FaArrowLeft style={{ marginRight: '6px' }} /> Back
+              </button>
+            )}
+
+            <button
+              type="submit"
+              style={{
+                ...styles.button,
+                opacity: isLoading ? 0.7 : 1,
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                flex: isLogin && loginStep === 2 ? 2 : 1,
+              }}
+              disabled={isLoading}
+            >
+              {isLoading 
+                ? 'Processing...' 
+                : !isLogin 
+                  ? 'Sign Up' 
+                  : loginStep === 1 
+                    ? 'Continue to OTP' 
+                    : 'Verify & Sign In'}
+            </button>
+          </div>
 
           {/* Form Toggle Link */}
-          <p style={styles.toggleText}>
-            {isLogin ? "Don't have an account? " : 'Already have an account? '}
-            <span style={styles.toggleLink} onClick={() => setIsLogin(!isLogin)}>
-              {isLogin ? 'Register' : 'Login'}
-            </span>
-          </p>
+          {loginStep === 1 && (
+            <p style={styles.toggleText}>
+              {isLogin ? "Don't have an account? " : 'Already have an account? '}
+              <span style={styles.toggleLink} onClick={() => setIsLogin(!isLogin)}>
+                {isLogin ? 'Register' : 'Login'}
+              </span>
+            </p>
+          )}
         </div>
       </form>
     </div>
@@ -313,6 +375,9 @@ const styles = {
     marginTop: '6px',
     boxShadow: '0 8px 20px rgba(124, 58, 237, 0.3)',
     transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   toggleText: {
     marginTop: '10px',

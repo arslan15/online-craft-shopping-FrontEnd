@@ -267,7 +267,7 @@ export default function LoginForm({ users = [], setUsers, onLoginSuccess }) {
                 : !isLogin 
                   ? 'Sign Up' 
                   : loginStep === 1 
-                    ? 'Login' 
+                    ? 'Continue to OTP' 
                     : 'Verify & Sign In'}
             </button>
           </div>

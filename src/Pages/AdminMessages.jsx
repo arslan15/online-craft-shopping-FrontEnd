@@ -8,7 +8,7 @@ export default function AdminMessages() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // 'all', 'unread', 'read'
- const API_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:5000';
+ const API_URL = process.env.REACT_APP_VITE_APP_API_URL || 'http://localhost:5000';
   // Fetch messages from backend on mount
   useEffect(() => {
     fetchMessages();

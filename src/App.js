@@ -9,7 +9,7 @@ import Portfolio from './Components/Portfolio/Portfolio';
 import Home from './Components/Home';
 import Login from './Components/Login/LoginForm';
 import { toast, ToastContainer, Slide } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'
+import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from './Components/ProtectedRoute';
 import AdminDashboard from './Pages/AdminDashboard';
 import UserDashboard from './Pages/UserDashBoard';
@@ -18,8 +18,7 @@ import axios from 'axios';
 import Cart from './Pages/Cart';
 import { WhatsAppWidget } from 'react-whatsapp-widget';
 import 'react-whatsapp-widget/dist/index.css';
-
-
+ import AdminMessages from './Pages/AdminMessages';
 function App() {
   const companyName = "Craft Company";
   const navigate = useNavigate();
@@ -50,11 +49,13 @@ function App() {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
-// 3. Persistent Cart State in localStorage
+
+  // 3. Persistent Cart State in localStorage
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem('app_cart');
     return savedCart ? JSON.parse(savedCart) : [];
   });
+
   // 4. Keep localStorage updated when user status changes
   useEffect(() => {
     if (currentUser) {
@@ -70,17 +71,17 @@ function App() {
 
   // 5. Cart Handlers
   const handleAddToCart = (product) => {
-
     const availableStock = product.ProductQty || 0;
     const productId = product._id || product.id;
     const existingItem = cart.find((item) => (item._id || item.id) === productId);
     const currentQtyInCart = existingItem ? existingItem.quantity : 0;
-  if (availableStock <= 0 || currentQtyInCart + 1 > availableStock) {
+    
+    if (availableStock <= 0 || currentQtyInCart + 1 > availableStock) {
       alert(`Sorry, "${product.productName}" is currently out of stock or limit reached.`);
       return;
     }
+    
     setCart((prevCart) => {
-      const productId = product._id || product.id;
       const existing = prevCart.find((item) => (item._id || item.id) === productId);
 
       if (existing) {
@@ -95,27 +96,21 @@ function App() {
     toast.success(`${product.productName} added to cart!`);
   };
 
-  const handleRemoveFromCart = (productId,qty) => {
-    
-    if(qty >=2){
-     setCart((prev) =>
-      prev.map((item) =>
-        (item._id || item.id) === productId
-          ? { ...item, quantity: item.quantity - 1 } // Replace 'quantity' with your cart's quantity key name
-          : item
-      )
-    );
-    toast.info("Item Removed from cart");
+  const handleRemoveFromCart = (productId, qty) => {
+    if (qty >= 2) {
+      setCart((prev) =>
+        prev.map((item) =>
+          (item._id || item.id) === productId
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        )
+      );
+      toast.info("Item Removed from cart");
+    } else {
+      setCart((prev) => prev.filter((item) => (item._id || item.id) !== productId));
+      toast.info("Item removed from cart");
+      navigate("/user");
     }
-    else{
-    setCart((prev) => prev.filter((item) => (item._id || item.id) !== productId));
-    toast.info("Item removed from cart");
-    navigate("/user");
-    }
-    //toast.info("Item removed from cart");
-  
-    //navigate("/user");
-    
   };
 
   const clearCart = () => setCart([]);
@@ -145,6 +140,7 @@ function App() {
       return false;
     }
   };
+
   // 7. Login handler & role-based redirect
   const handleLoginSuccess = (user) => {
     setCurrentUser(user);
@@ -162,24 +158,23 @@ function App() {
     navigate('/login');
   };
 
-  return <>
-  <ToastContainer 
+  return (
+    <>
+      <ToastContainer 
         position="top-left" 
         autoClose={3000} 
         theme="dark" 
         transition={Slide} 
       />
       <div className="whatsapp-widget-container">
-        {/* The tooltip box that appears on hover */}
-      <WhatsAppWidget 
-        phoneNumber="923329580707" // Use your full international number without + or spaces
-        companyName="Customer Support"
-        message="Hello! 👋 How can we help you today?"
-        replyTimeText="Typically replies within a few minutes"
-        
-      />
+        <WhatsAppWidget 
+          phoneNumber="923329580707" 
+          companyName="Customer Support"
+          message="Hello! 👋 How can we help you today?"
+          replyTimeText="Typically replies within a few minutes"
+        />
       </div>
-     <MyContext.Provider 
+      <MyContext.Provider 
         value={{ 
           companyName, 
           currentUser, 
@@ -195,47 +190,45 @@ function App() {
           placeOrder
         }}
       >
-    <Routes>
-      {/* MainLayout Route wrapping public pages AND protected dashboards */}
-      <Route
-        path="/"
-        element={
-          <MainLayout/>
-        }
-      >
-        <Route index element={<Home />} />
-        <Route path="home" element={<Home />} />
-        <Route path="portfolio" element={<Portfolio />} />
-        <Route path="about" element={<About />} />
-        <Route path="contact" element={<Contact />} />
-        
-        <Route
-          path="login"
-          element={
-            <Login
-              users={users}
-              setUsers={setUsers}
-              onLoginSuccess={handleLoginSuccess}
+        <Routes>
+          {/* MainLayout Route wrapping public pages AND protected dashboards */}
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="home" element={<Home />} />
+            <Route path="portfolio" element={<Portfolio />} />
+            <Route path="about" element={<About />} />
+            <Route path="contact" element={<Contact />} />
+            
+            <Route
+              path="login"
+              element={
+                <Login
+                  users={users}
+                  setUsers={setUsers}
+                  onLoginSuccess={handleLoginSuccess}
+                />
+              }
             />
-          }
-        />
 
-        {/* Protected User Route - nested inside MainLayout so Header/Footer stay visible */}
-        <Route element={<ProtectedRoute user={currentUser} allowedRole="User" />}>
-          <Route path="user" element={<UserDashboard />} />
-          <Route path="cart" element={<Cart />} />
-        </Route>
+            {/* Protected User Route */}
+            <Route element={<ProtectedRoute user={currentUser} allowedRole="User" />}>
+              <Route path="user" element={<UserDashboard />} />
+              <Route path="cart" element={<Cart />} />
+            </Route>
 
-        {/* Protected Admin Route - nested inside MainLayout so Header/Footer stay visible */}
-        <Route element={<ProtectedRoute user={currentUser} allowedRole="Admin" />}>
-          <Route path="admin" element={<AdminDashboard />} />
-        </Route>
-        
-        <Route path="*" element={<NotFound />} />
-      </Route>
-    </Routes>
-    </MyContext.Provider>
-  </>
+            {/* Protected Admin Route */}
+            <Route element={<ProtectedRoute user={currentUser} allowedRole="Admin" />}>
+              <Route path="admin" element={<AdminDashboard />} />
+              {/* 🔑 2. Added Admin Messages Route */}
+              <Route path="admin/messages" element={<AdminMessages />} />
+            </Route>
+            
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </MyContext.Provider>
+    </>
+  );
 }
 
 export default App;

@@ -20,6 +20,7 @@
     "react-toastify": "^11.1.0",
     "react-whatsapp-widget": "^2.2.0",
     "recharts": "^2.15.0",
+    "socket.io-client": "^4.8.4",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

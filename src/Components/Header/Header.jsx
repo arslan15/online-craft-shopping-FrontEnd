@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import { io } from 'socket.io-client';
 import { 
   FaUser, 
   FaBriefcase, 
@@ -10,8 +11,9 @@ import {
   FaSignOutAlt,
   FaTachometerAlt,
   FaShoppingCart,
+  FaBell 
 } from 'react-icons/fa';
-import CraftLogo from '../../CraftLogo.jsx'; // Import your custom SVG craft logo component
+import CraftLogo from '../../CraftLogo.jsx';
 import './Header.css';
 
 // User navigation links
@@ -39,6 +41,7 @@ const ADMIN_NAV_ITEMS = [
 
 function Header({ companyName = "Craft Company", isLoggedIn = false, isAdmin = false, isUser = false, cartCount = 0, onLogout }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [adminUnreadCount, setAdminUnreadCount] = useState(0);
   const headerRef = useRef(null);
 
   const toggleMenu = () => setIsMobileMenuOpen((prev) => !prev);
@@ -48,6 +51,29 @@ function Header({ companyName = "Craft Company", isLoggedIn = false, isAdmin = f
     closeMenu();
     if (onLogout) onLogout();
   };
+
+  // Socket.io setup for Admin notifications
+  useEffect(() => {
+    if (!isAdmin) return; 
+
+    const API_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:5000';
+    const socket = io(API_URL); 
+    fetch(`${API_URL}/api/admin/notifications/unread-count`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setAdminUnreadCount(data.unreadCount);
+      })
+      .catch((err) => console.error("Failed to load unread count:", err));
+
+    // Listen for live broadcast when a new contact form comes in
+    socket.on('updateNotificationCount', (data) => {
+      setAdminUnreadCount(data.unreadCount);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [isAdmin]);
 
   // Close mobile menu when clicking outside header
   useEffect(() => {
@@ -60,7 +86,6 @@ function Header({ companyName = "Craft Company", isLoggedIn = false, isAdmin = f
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Select navigation items and branding based on role
   const navItems = isAdmin 
     ? ADMIN_NAV_ITEMS 
     : isUser 
@@ -73,20 +98,20 @@ function Header({ companyName = "Craft Company", isLoggedIn = false, isAdmin = f
     <header className="header" ref={headerRef}>
       <div className="header-container">
         {/* Dynamic Brand / Logo */}
-<Link to={brandLink} className="logo" onClick={closeMenu} aria-label="Home">
-  <div className="logo-icon-wrapper">
-    <CraftLogo size={36} color="#d97706" />
-  </div>
-  <div className="logo-text-group" style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2', marginLeft: '10px' }}>
-    <span className="logo-text" style={{ fontSize: '18px', fontWeight: 'bold' }}>
-      <span className="brand-primary" style={{ color: '#f3f4f6' }}>Syed Arslan</span>{' '}
-      <span className="brand-secondary" style={{ color: '#d97706' }}>Saeed</span>
-    </span>
-    <span className="logo-subtitle" style={{ fontSize: '11px', color: '#d1d5db', letterSpacing: '0.5px' }}>
-      Handcrafted Artistry
-    </span>
-  </div>
-</Link>
+        <Link to={brandLink} className="logo" onClick={closeMenu} aria-label="Home">
+          <div className="logo-icon-wrapper">
+            <CraftLogo size={36} color="#d97706" />
+          </div>
+          <div className="logo-text-group" style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.2', marginLeft: '10px' }}>
+            <span className="logo-text" style={{ fontSize: '18px', fontWeight: 'bold' }}>
+              <span className="brand-primary" style={{ color: '#f3f4f6' }}>Syed Arslan</span>{' '}
+              <span className="brand-secondary" style={{ color: '#d97706' }}>Saeed</span>
+            </span>
+            <span className="logo-subtitle" style={{ fontSize: '11px', color: '#d1d5db', letterSpacing: '0.5px' }}>
+              Handcrafted Artistry
+            </span>
+          </div>
+        </Link>
 
         {/* Dynamic Navigation Menu */}
         <nav className={`nav-menu ${isMobileMenuOpen ? 'active' : ''}`} aria-label="Main Navigation">
@@ -102,6 +127,38 @@ function Header({ companyName = "Craft Company", isLoggedIn = false, isAdmin = f
               <span>{label}</span>
             </NavLink>
           ))}
+
+          {/* Render Admin-Only Messages/Notification Icon with Badge */}
+          {isAdmin && (
+            <NavLink
+              to="/admin/messages"
+              className={({ isActive }) => `nav-link cart-link ${isActive ? 'active' : ''}`}
+              onClick={closeMenu}
+              aria-label={`Admin Messages with ${adminUnreadCount} unread items`}
+            >
+              <div className="cart-icon-wrapper" style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                <FaBell className="nav-icon" aria-hidden="true" />
+                {adminUnreadCount > 0 && (
+                  <span className="cart-badge" style={{
+                    position: 'absolute',
+                    top: '-8px',
+                    right: '-10px',
+                    backgroundColor: '#ef4444',
+                    color: 'white',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    padding: '2px 6px',
+                    borderRadius: '50%',
+                    minWidth: '18px',
+                    textAlign: 'center'
+                  }}>
+                    {adminUnreadCount > 99 ? '99+' : adminUnreadCount}
+                  </span>
+                )}
+              </div>
+              <span style={{ marginLeft: '6px' }}>Messages</span>
+            </NavLink>
+          )}
 
           {/* Render Cart link with Badge Counter exclusively for 'isUser' */}
           {isUser && (

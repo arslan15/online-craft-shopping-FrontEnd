@@ -37,7 +37,7 @@ function Footer() {
             Syed Arslan <span>Saeed</span>
           </a>
           <p className="footer-tagline">
-            Building responsive, performant, and modern web applications.
+            Building responsive, performance, and modern web applications.
           </p>
         </div>
 

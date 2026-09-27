@@ -56,7 +56,7 @@ function Header({ companyName = "Craft Company", isLoggedIn = false, isAdmin = f
   useEffect(() => {
     if (!isAdmin) return; 
 
-    const API_URL = import.meta.env.VITE_APP_API_URL || 'http://localhost:5000';
+    const API_URL = process.env.REACT_APP_VITE_APP_API_URL || 'http://localhost:5000';
     const socket = io(API_URL); 
     fetch(`${API_URL}/api/admin/notifications/unread-count`)
       .then((res) => res.json())

@@ -125,7 +125,12 @@ function App() {
     }
 
     try {
-      const totalAmount = cart.reduce((sum, item) => sum + (item.price || 10) * item.quantity, 0);
+      const totalAmount = cart.reduce((sum, item) => {
+        const itemPrice = (item.discountPrice !== null && item.discountPrice !== undefined && item.discountPrice < item.price) 
+          ? item.discountPrice 
+          : (item.price || 10);
+        return sum + itemPrice * item.quantity;
+      }, 0);
       const response = await axios.post(`${BASE_URL}/orders/place-order`, {
         cart,
         shippingAddress,

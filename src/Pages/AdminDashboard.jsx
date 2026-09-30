@@ -431,6 +431,10 @@ const handleOpenEditModal = (user) => {
       if (formProductData.ImageUrl) {
         formData.append('ImageUrl', formProductData.ImageUrl);
       }
+      // ✨ NEW: Append discountPrice only if the user entered a valid value
+      if (formProductData.discountPrice !== '' && formProductData.discountPrice !== null && formProductData.discountPrice !== undefined) {
+        formData.append('discountPrice', Number(formProductData.discountPrice));
+      }
     console.log("Current Form State:", formProductData);
     console.log("Attached File object:", formProductData.ImageUrl);
 
@@ -1017,7 +1021,7 @@ const handleOpenEditModal = (user) => {
                   />
                 </div>
                 <div style={styleProduct.inputGroup}>
-                  <label style={styleProduct.label}>Price</label>
+                  <label style={styleProduct.label}>Regular Price</label>
                   <input
                     type="number"
                     name="price"
@@ -1028,6 +1032,17 @@ const handleOpenEditModal = (user) => {
                     style={styles.input}
                   />
                 </div>
+    <div style={styleProduct.inputGroup}>
+      <label style={styleProduct.label}>Discount Price (Optional)</label>
+      <input
+        type="number"
+        name="discountPrice"
+        placeholder="Leave blank if no sale"
+        value={formProductData.discountPrice || ''}
+        onChange={handleProductChange}
+        style={styles.input}
+      />
+    </div>
                 <button type="submit" style={{ ...styles.button, cursor: 'pointer' }}>Add Product</button>
               </fieldset>
             </form>

@@ -336,6 +336,7 @@ const UserDashboard = () => {
                     ProductQty={product.ProductQty}
                     ProductDescription={product.ProductDescription}
                     price={product.price}
+                    discountPrice = {product.discountPrice}
                     imageUrl={resolvedImageUrl}
                     ImageUrl={resolvedImageUrl} 
                     onAddToCart={() => handleAddToCart(product)}
